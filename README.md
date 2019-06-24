@@ -47,7 +47,7 @@ MyModule = MyModuleInjector({
 })
 ```
 
-There are a few examples of complete test setups for both Webpack 1, 2, 3 & 4 in the [`example`](./example) folder.
+There are a few examples of complete test setups for Webpack 2, 3 & 4 in the [`example`](./example) folder.
 
 ## License
 

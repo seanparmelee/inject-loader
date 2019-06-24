@@ -22,8 +22,8 @@ module.exports = {
         include: [constants.SOURCE_PATH, constants.TESTS_PATH],
         query: {
           cacheDirectory: true,
-          presets: ['es2015'],
-          plugins: ['add-module-exports', 'transform-flow-strip-types'],
+          presets: [['@babel/preset-env', {modules: 'cjs'}]],
+          plugins: ['add-module-exports', '@babel/plugin-transform-flow-strip-types'],
         },
       },
     ],

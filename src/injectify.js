@@ -1,6 +1,6 @@
 // @flow
 
-import {transform, traverse, types as t, transformFromAst} from 'babel-core';
+import {transformSync, traverse, types as t, transformFromAstSync} from '@babel/core';
 import wrapperTemplate from './wrapper_template.js';
 
 function processRequireCall(path) {
@@ -22,11 +22,13 @@ function processRequireCall(path) {
 }
 
 export default function injectify(context: Object, source: string, inputSourceMap: string) {
-  const {ast} = transform(source, {
+  const {ast} = transformSync(source, {
+    ast: true,
     babelrc: false,
     code: false,
     compact: false,
     filename: context.resourcePath,
+    rootMode: 'upward-optional',
   });
 
   const dependencies = [];
@@ -49,18 +51,20 @@ export default function injectify(context: Object, source: string, inputSourceMa
   const wrapperModuleAst = t.file(
     t.program([
       wrapperTemplate({
-        SOURCE: ast,
+        SOURCE: ast.program.body,
         SOURCE_PATH: t.stringLiteral(context.resourcePath),
         DEPENDENCIES: t.arrayExpression(dependencies.map(d => t.stringLiteral(d))),
       }),
-    ])
+    ]),
+    []
   );
 
-  return transformFromAst(wrapperModuleAst, source, {
+  return transformFromAstSync(wrapperModuleAst, source, {
     sourceMaps: context.sourceMap,
     sourceFileName: context.resourcePath,
-    inputSourceMap,
+    inputSourceMap: inputSourceMap || undefined,
     babelrc: false,
+    configFile: false,
     compact: false,
     filename: context.resourcePath,
   });
